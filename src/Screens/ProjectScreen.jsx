@@ -5,6 +5,8 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import AddMember from '../components/AddMember';
 import CreateTask from '../components/CreateTask';
+import TaskItem from '../components/TaskItem';
+import EditProject from '../components/EditProject';
 
 const ProjectScreen = () => {
     const location = useLocation();
@@ -13,13 +15,8 @@ const ProjectScreen = () => {
     const [token, setToken] = useState('');
     const [tasks, setTasks] = useState([]);
     const [showCreateTask, setShowCreateTask] = useState(false);
+    const [showEditProject, setShowEditProject] = useState(false);
     
-    // States for task editing
-    const [editingTaskId, setEditingTaskId] = useState(null);
-    const [editStatus, setEditStatus] = useState('todo');
-    const [editPriority, setEditPriority] = useState('medium');
-    const [editAssignee, setEditAssignee] = useState('');
-
     // Hold project in state to reactively render updates (like newly added members)
     const [currentProject, setCurrentProject] = useState(location.state?.project);
 
@@ -82,37 +79,6 @@ const ProjectScreen = () => {
         }
     };
 
-    const handleUpdateTask = async (taskId) => {
-        const localtoken = localStorage.getItem('token');
-        try {
-            const response = await axios.put(
-                `https://taskflow-backend-8yfj.onrender.com/taskflow/api/v1/tasks/${taskId}`,
-                {
-                    status: editStatus,
-                    priority: editPriority,
-                    assignee: editAssignee || undefined
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localtoken}`
-                    }
-                }
-            );
-
-            console.log("Task updated successfully:", response.data);
-            alert("Task updated successfully!");
-
-            // Update local tasks list with the returned populated task details
-            if (response.data?.data) {
-                setTasks(prev => prev.map(t => t._id === taskId ? response.data.data : t));
-            }
-            setEditingTaskId(null);
-        } catch (error) {
-            console.error("Failed to update task:", error.response?.data || error.message);
-            alert(error.response?.data?.message || "Failed to update task");
-        }
-    };
-
     // Get initials for avatar circles
     const getInitials = (name) => {
         if (!name) return "?";
@@ -167,6 +133,9 @@ const ProjectScreen = () => {
                     </button>
                     {isOwner && (
                         <>
+                            <button className="btn-back" style={{ margin: 0 }} onClick={() => setShowEditProject(!showEditProject)}>
+                                {showEditProject ? 'Cancel Edit' : '✏️ Edit Project'}
+                            </button>
                             <button className="btn-delete" style={{ margin: 0 }} onClick={handleDeleteProject}>
                                 Delete Project
                             </button>
@@ -189,6 +158,17 @@ const ProjectScreen = () => {
                         setShowCreateTask(false);
                     }}
                     onCancel={() => setShowCreateTask(false)}
+                />
+            )}
+
+            {showEditProject && (
+                <EditProject 
+                    project={currentProject} 
+                    onProjectUpdated={(updatedProject) => {
+                        setCurrentProject(updatedProject);
+                        setShowEditProject(false);
+                    }}
+                    onCancel={() => setShowEditProject(false)}
                 />
             )}
           
@@ -246,118 +226,18 @@ const ProjectScreen = () => {
                 {tasks.length > 0 ? (
                     <div className="tasks-list">
                         {tasks.map((task, index) => (
-                            editingTaskId === task._id ? (
-                                <div className="task-card" key={task._id || index} style={{ borderStyle: "dashed", borderColor: "#6366f1" }}>
-                                    <div className="task-info" style={{ width: '100%', gap: '12px' }}>
-                                        <span className="task-card-title">{task.title} (Editing)</span>
-                                        
-                                        <div className="form-grid" style={{ width: '100%', gap: '10px' }}>
-                                            <div className="form-group">
-                                                <label style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Status</label>
-                                                <select 
-                                                    className="task-input task-select"
-                                                    value={editStatus}
-                                                    onChange={(e) => setEditStatus(e.target.value)}
-                                                >
-                                                    <option value="todo">To Do</option>
-                                                    <option value="in-progress">In Progress</option>
-                                                    <option value="done">Done</option>
-                                                </select>
-                                            </div>
-
-                                            <div className="form-group">
-                                                <label style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Priority</label>
-                                                <select 
-                                                    className="task-input task-select"
-                                                    value={editPriority}
-                                                    onChange={(e) => setEditPriority(e.target.value)}
-                                                >
-                                                    <option value="low">Low</option>
-                                                    <option value="medium">Medium</option>
-                                                    <option value="high">High</option>
-                                                </select>
-                                            </div>
-
-                                            <div className="form-group">
-                                                <label style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Assignee</label>
-                                                <select 
-                                                    className="task-input task-select"
-                                                    value={editAssignee}
-                                                    onChange={(e) => setEditAssignee(e.target.value)}
-                                                >
-                                                    <option value="">Unassigned</option>
-                                                    {assignees.map(user => {
-                                                        const id = user._id || user;
-                                                        const name = user.name || user.email || `User (${id})`;
-                                                        return (
-                                                            <option key={id} value={id}>
-                                                                {name}
-                                                            </option>
-                                                        );
-                                                    })}
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '10px' }}>
-                                            <button className="btn-back" style={{ margin: 0, padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => setEditingTaskId(null)}>
-                                                Cancel
-                                            </button>
-                                            <button className="btn-back" style={{ margin: 0, padding: '6px 12px', fontSize: '0.8rem', background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#fff', borderColor: 'transparent' }} onClick={() => handleUpdateTask(task._id)}>
-                                                Save
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="task-card" key={task._id || index}>
-                                    <div className="task-info">
-                                        <span className="task-card-title">{task.title}</span>
-                                        {task.description && (
-                                            <span className="task-card-desc">{task.description}</span>
-                                        )}
-                                        <div className="task-badges">
-                                            <span className={`badge badge-${task.status}`}>
-                                                {task.status}
-                                            </span>
-                                            {task.priority && (
-                                                <span className={`badge badge-${task.priority}`}>
-                                                    {task.priority}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                        <div className="task-assignee">
-                                            {task.assignee ? (
-                                                <>
-                                                    <div className="task-assignee-avatar">
-                                                        {getInitials(task.assignee.name || task.assignee.email)}
-                                                    </div>
-                                                    <span className="task-assignee-name">
-                                                        {task.assignee.name || task.assignee.email}
-                                                    </span>
-                                                </>
-                                            ) : (
-                                                <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Unassigned</span>
-                                            )}
-                                        </div>
-                                        <button 
-                                            className="btn-back" 
-                                            style={{ margin: 0, padding: '6px 12px', fontSize: '0.8rem' }}
-                                            onClick={() => {
-                                                setEditingTaskId(task._id);
-                                                setEditStatus(task.status || 'todo');
-                                                setEditPriority(task.priority || 'medium');
-                                                setEditAssignee(task.assignee?._id || task.assignee || '');
-                                            }}
-                                        >
-                                            Edit
-                                        </button>
-                                    </div>
-                                </div>
-                            )
+                            <TaskItem 
+                                key={task._id || index}
+                                task={task}
+                                isProjectOwner={isOwner}
+                                assignees={assignees}
+                                onTaskUpdated={(updatedTask) => {
+                                    setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t));
+                                }}
+                                onTaskDeleted={(deletedTaskId) => {
+                                    setTasks(prev => prev.filter(t => t._id !== deletedTaskId));
+                                }}
+                            />
                         ))}
                     </div>
                 ) : (
