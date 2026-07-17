@@ -1,18 +1,17 @@
 
-
-import Switch from "./components/Switch"
-
+import Switch from "./components/Switch";
+import DashboardScreen from "./Screens/DashboardScreen";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
- 
-  
   return (
-    <>
-      <div className="app">
-        <Switch />
-      </div>
-     
-    </>
-  )
-}
-export default App
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Switch />} />
+        <Route path="/dashboard" element={<DashboardScreen />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;

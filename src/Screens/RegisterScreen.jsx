@@ -1,12 +1,14 @@
 import InputField from "../components/InputField";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RegisterScreen = () => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('')
     const [role, setRole] = useState('')
     const [password,setPassword] = useState('')
+    const navigate = useNavigate();
 
 
    
@@ -20,7 +22,16 @@ const RegisterScreen = () => {
                 role
             });
             console.log("Registration successful:", response.data);
+            
+            // Save token to localStorage
+            if (response.data?.data?.token) {
+                localStorage.setItem('token', response.data.data.token);
+            } else if (response.data?.token) {
+                localStorage.setItem('token', response.data.token);
+            }
+            
             alert("Registration successful!");
+            navigate("/dashboard");
         } catch (error) {
             console.error("Registration failed:", error.response?.data || error.message);
             alert(error.response?.data?.message || "Registration failed!");

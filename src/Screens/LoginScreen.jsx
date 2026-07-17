@@ -1,11 +1,13 @@
 import { useState } from "react"
 import InputField from "../components/InputField"
 import axios from "axios"
+import { useNavigate } from 'react-router-dom'
 
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,7 +17,13 @@ const LoginScreen = () => {
                 email,password
             })
             console.log("login successful:", response.data);
-            alert("loginsuccessful!");
+            if (response.data?.data?.token) {
+                localStorage.setItem('token', response.data.data.token);
+            } else if (response.data?.token) {
+                localStorage.setItem('token', response.data.token);
+            }
+            alert("login successful!");
+            navigate("/dashboard");
             
         } catch (error) {
             console.error(error)
