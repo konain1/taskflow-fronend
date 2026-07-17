@@ -1,12 +1,17 @@
-import RegisterScreen from "./Screens/RegisterScreen"
+
+
+import Switch from "./components/Switch"
 
 
 const App = () => {
+ 
   
   return (
     <>
-      <h1>Hello world</h1>
-      <RegisterScreen />
+      <div className="app">
+        <Switch />
+      </div>
+     
     </>
   )
 }

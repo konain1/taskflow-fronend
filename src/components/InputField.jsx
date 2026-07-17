@@ -1,22 +1,16 @@
-
-
-
-const InputField = ({ name, type, value,onChange }) => {
- 
-    
-    
-   
+const InputField = ({ name, type, value, onChange }) => {
     return (
+        <div className="input-group">
+            <span className="input-label">{name}</span>
+            <input 
+                className="input-field" 
+                type={type} 
+                onChange={(e) => onChange(e.target.value)} 
+                value={value}
+                placeholder={`Enter ${name}`}
+            />
+        </div>
+    );
+};
 
-     
-        <>
-            <div>
-                <span>{name} : </span>
-                <input type={type} onChange={(e)=>onChange(e.target.value)} value={value}/>
-            </div>
-        </>
-    )
-    
-}
-
-export default InputField
+export default InputField;

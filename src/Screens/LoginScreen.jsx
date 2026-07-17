@@ -47,7 +47,7 @@ const LoginScreen = () => {
                         />
                     </div>
                     <div>
-                        <button type="submit">Login</button>
+                        <button type="submit" className="btn-submit">Login</button>
                     </div>
                 </form>
 

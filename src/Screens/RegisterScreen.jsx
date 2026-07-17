@@ -62,7 +62,7 @@ const RegisterScreen = () => {
                 />
             </div>
             <div>
-                <button type="submit">submit</button>
+                <button type="submit" className="btn-submit">submit</button>
             </div>
         </form>
     );
