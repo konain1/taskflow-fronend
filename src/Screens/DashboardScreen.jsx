@@ -16,7 +16,7 @@ const DashboardScreen = () => {
             try {
                 // 2. Decode the JWT token to read payload fields (like email, role)
                 const decoded = jwtDecode(localToken);
-                console.log(decoded)
+            
                 setUser(decoded);
                 console.log("Decoded user:", decoded);
             } catch (err) {
