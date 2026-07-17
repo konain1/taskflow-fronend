@@ -158,3 +158,120 @@
     color: #f8fafc;
 }
 
+.btn-delete {
+    align-self: flex-start;
+    background: rgba(239, 68, 68, 0.08);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Tasks Section */
+.tasks-section {
+    margin-top: 30px;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 15px;
+}
+
+.task-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.task-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.task-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.task-card-desc {
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+.task-badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.badge {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-todo { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+.badge-in-progress { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.badge-done { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+
+.badge-low { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
+.badge-medium { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
+.badge-high { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+.task-assignee {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-assignee-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.task-assignee-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+
+
