@@ -1,3 +1,4 @@
+import RegisterScreen from "./Screens/RegisterScreen"
 
 
 const App = () => {
@@ -5,6 +6,7 @@ const App = () => {
   return (
     <>
       <h1>Hello world</h1>
+      <RegisterScreen />
     </>
   )
 }
