@@ -3,40 +3,19 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './ProjectScreen.css';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-
+import AddMember from '../components/AddMember';
 
 const ProjectScreen = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [user, setUser] = useState('');
     const [token, setToken] = useState('');
-    const [allUsers, setAllUsers] = useState([]);
-    const [selectedUserId, setSelectedUserId] = useState('');
-    const [showAddMember, setShowAddMember] = useState(false);
     
     // Hold project in state to reactively render updates (like newly added members)
     const [currentProject, setCurrentProject] = useState(location.state?.project);
 
     const handleBack = () => {
         navigate('/dashboard');
-    };
-
-    const getAllUsers = async (localtoken) => {
-        const tokenToUse = localtoken || localStorage.getItem('token');
-        if (!tokenToUse) return;
-
-        try {
-            const response = await axios.get('https://taskflow-backend-8yfj.onrender.com/taskflow/api/v1/users', {
-                headers: {
-                    Authorization: `Bearer ${tokenToUse}`
-                }
-            });
-            if (response.data?.data) {
-                setAllUsers(response.data.data);
-            }
-        } catch (error) {
-            console.error('cant fetch all users ', error);
-        }
     };
 
     if (!currentProject) {
@@ -59,39 +38,6 @@ const ProjectScreen = () => {
         return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
     };
 
-    const handleAddMemberSubmit = async () => {
-        const localtoken = localStorage.getItem('token');
-        if (!selectedUserId) {
-            alert("Please select a user first!");
-            return;
-        }
-
-        try {
-            const response = await axios.post(
-                `https://taskflow-backend-8yfj.onrender.com/taskflow/api/v1/project/${currentProject._id}/add-member`,
-                { memberId: selectedUserId },
-                {
-                    headers: {
-                         Authorization: `Bearer ${localtoken}`
-                    }
-                }
-            );
-
-            console.log("Member added successfully:", response.data);
-            alert("Member added successfully!");
-
-            // Update local project details
-            if (response.data?.data) {
-                setCurrentProject(response.data.data);
-            }
-            setSelectedUserId('');
-            setShowAddMember(false);
-        } catch (error) {
-            console.error('unable to add member', error.response?.data || error.message);
-            alert(error.response?.data?.message || 'Unable to add member');
-        }
-    };
-
     useEffect(() => {
         const localtoken = localStorage.getItem('token')
         if (localtoken) {
@@ -99,7 +45,6 @@ const ProjectScreen = () => {
                 setToken(localtoken)
                 const decoded = jwtDecode(localtoken)
                 setUser(decoded)
-                getAllUsers(localtoken); // Load users on mount
             } catch (error) {
                 console.error(error)
                 localStorage.removeItem('token')
@@ -107,44 +52,20 @@ const ProjectScreen = () => {
         }
     },[])
 
-    // Filter out users who are already owner or members
-    const nonMembers = allUsers.filter(u => 
-        u._id !== currentProject.owner?._id && 
-        u._id !== currentProject.owner && // cover case where owner is id string
-        !currentProject.members?.some(member => member._id === u._id)
-    );
-
     return (
         <div className="project-screen-container">
-            <div>
-                <div style={{ display: "flex", gap: "10px" }}>
-                    <button className="btn-back" onClick={handleBack}>
-                        ← Back to Dashboard
-                    </button>
-                    <button className="btn-back" onClick={() => setShowAddMember(!showAddMember)}>
-                        {showAddMember ? 'Cancel' : '+ Add new Member'}
-                    </button>
-                </div>
-
-                {showAddMember && (
-                    <div className="add-member-panel">
-                        <select 
-                            className="add-member-select"
-                            value={selectedUserId} 
-                            onChange={(e) => setSelectedUserId(e.target.value)}
-                        >
-                            <option value="">Select a user...</option>
-                            {nonMembers.map(u => (
-                                <option key={u._id} value={u._id}>
-                                    {u.name || u.email} ({u.email})
-                                </option>
-                            ))}
-                        </select>
-                        <button className="btn-back" style={{ margin: 0 }} onClick={handleAddMemberSubmit}>
-                            Add
-                        </button>
-                    </div>
-                )}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <button className="btn-back" onClick={handleBack}>
+                    ← Back to Dashboard
+                </button>
+                
+                {/* Reusable Add Member Component */}
+                <AddMember 
+                    projectId={currentProject._id} 
+                    ownerId={currentProject.owner?._id || currentProject.owner} 
+                    members={currentProject.members} 
+                    onMemberAdded={(updatedProject) => setCurrentProject(updatedProject)} 
+                />
             </div>
           
 
