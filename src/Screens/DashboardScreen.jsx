@@ -32,7 +32,7 @@ const DashboardScreen = () => {
 
     return (
         <div style={{ padding: "20px" }}>
-            <h2>Dashboard</h2>
+            {/* <h2>Dashboard</h2> */}
             {user ? (
                 user.role === 'member' ? <MemberDashboard /> : <AdminDashboard />
             ) : (

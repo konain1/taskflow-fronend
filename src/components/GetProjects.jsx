@@ -1,8 +1,13 @@
 import React from 'react';
 import './GetProjects.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const GetProjects = ({ data }) => {
-    // Graceful check for empty or undefined data array
+
+    const navigate = useNavigate()
+
+
     if (!data || data.length === 0) {
         return (
             <div className="no-projects">
@@ -11,10 +16,14 @@ const GetProjects = ({ data }) => {
         );
     }
 
+    const handleProject = (item) => {
+        navigate('/projectScreen', { state: { project: item } });
+    };
+
     return (
         <div className="projects-grid">
             {data.map((item, index) => (
-                <div className="project-card" key={item._id || index}>
+                <div onClick={()=>handleProject(item)} className="project-card" key={item._id || index}>
                     <div className="project-header">
                         <h4 className="project-title">{item.title}</h4>
                         {item.status && (
