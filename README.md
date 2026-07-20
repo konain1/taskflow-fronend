@@ -14,6 +14,8 @@ This application is built with a premium glassmorphic dark-theme UI and features
 * **Logout**: When you are done, click the **Logout** button in the top-right corner of the Dashboard to securely end your session.
 
 ### 2. The Dashboard (Customized by Role)
+* **Dynamic Role Title**: The dashboard displays your role (Admin Dashboard or Member Dashboard) at the top so you instantly know your access level.
+* **Health Check**: Click the **Health** button (next to Logout) to quickly verify that the TaskFlow backend API services are up and running smoothly.
 * **Admin Dashboard**: Contains options to view all active projects and create new projects.
 * **Member Dashboard**: Allows members to view projects they own or are members of, and quickly set up new projects.
 
